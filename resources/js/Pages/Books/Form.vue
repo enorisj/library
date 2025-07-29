@@ -7,7 +7,12 @@ import DarkButton from '@/Components/DarkButton.vue';
 import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import InputGroup from '@/Components/InputGroup.vue';
-//import Select2 from 'vue3-select2-component';
+import select2 from 'select2';
+select2();
+//import $ from 'jquery'
+//window.$ = $
+
+import Select2 from 'vue3-select2-component';
 
 
 const props = defineProps({
@@ -24,7 +29,10 @@ const req = ref('required');
 const srcImg = ref('../../storage/img/example.png')
 const text_message = ref('');
 const class_message = ref('hidden');
-
+const options = ref([]);
+props.authors.map((row)=>(
+     options.value.push({'id': row.id, 'text': row.last_name+ ' '+ row.name}) 
+));
 
 if(props.book != null){
     form.isbn = props.book.isbn;
@@ -36,6 +44,9 @@ if(props.book != null){
     form.image = props.book.image;
     form.id = props.book.id;
     srcImg.value = '../../storage/'+props.book.image
+    props.authorsOfBook.map((row) => (
+        form.authors.push(row.id)
+    ))
 }
 const save =()=>{
     if(props.book == null){
@@ -177,6 +188,12 @@ const showImg = (e)=>{
                         </svg>
                     </InputGroup>
                     <InputError :message="form.errors.image"></InputError>
+                    
+                    <span class="mt-2">Add Authors</span>
+                    <Select2 v-model="form.authors" :options="options" :settings="{multiple:true, width:'100%'}"
+                     @change ="form.authors = $event.target.value"/>
+                     <InputError :message="form.errors.authors"></InputError>
+
                     <PrimaryButton @click="save"> Save</PrimaryButton>
                 </form>
             </div>

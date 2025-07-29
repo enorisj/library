@@ -48,6 +48,7 @@ class BookController extends Controller
             'release_date'=> 'required|date',
             'pages'=> 'required|numeric',
             'image'=> 'required|file|mimes:png,jpg,gif',
+            'authors' =>'required|array'
         ]);
 ;
         $book = Book::create($validatedData);
@@ -59,6 +60,7 @@ class BookController extends Controller
             $book->save( );
 
         }
+        $book->authors()->sync($request->authors);
         return redirect('books')->with('success','Book created');
     }
 
@@ -96,6 +98,7 @@ class BookController extends Controller
             'release_date'=> 'required|date',
             'pages'=> 'required|numeric',
             'id'=> 'required|numeric',
+                 'authors' =>'required|array'
         ]);
 
         $book = Book::find($request->id);
@@ -108,7 +111,7 @@ class BookController extends Controller
             $book->image = 'img/'.$img_name;     
             $book->save();
            }
-          
+               $book->authors()->sync($request->authors); 
         return redirect('books')->with('success','Book updated');
     }
     public function update(Request $request, Book $book)
